@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/exo-query/static/css/main.e6c13ad2.css",
+    "main.js": "/exo-query/static/js/main.33f48029.js",
+    "index.html": "/exo-query/index.html",
+    "main.e6c13ad2.css.map": "/exo-query/static/css/main.e6c13ad2.css.map",
+    "main.33f48029.js.map": "/exo-query/static/js/main.33f48029.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.33f48029.js"
+  ]
+}
