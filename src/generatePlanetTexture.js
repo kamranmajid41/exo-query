@@ -2,38 +2,38 @@ import * as THREE from 'three';
 
 // Predefined textures for planets (these would be in your 'public/textures' folder)
 const textures = {
-  mercury: '/textures/2k_mercury.jpg',
-  venus: '/textures/2k_venus_surface.jpg',
-  mars: '/textures/2k_mars.jpg',
-  jupiter: '/textures/2k_jupiter.jpg',
-  saturn: '/textures/2k_saturn.jpg',
-  uranus: '/textures/2k_uranus.jpg',
-  neptune: '/textures/2k_neptune.jpg',
+  mercury: 'exo-query/textures/2k_mercury.jpg',
+  venus: 'exo-query/textures/2k_venus_surface.jpg',
+  mars: 'exo-query/textures/2k_mars.jpg',
+  jupiter: 'exo-query/textures/2k_jupiter.jpg',
+  saturn: 'exo-query/textures/2k_saturn.jpg',
+  uranus: 'exo-query/textures/2k_uranus.jpg',
+  neptune: 'exo-query/textures/2k_neptune.jpg',
 };
 
 const temperatures = {
-  "terre": 288,     // Earth: Average surface temperature ~15°C (288K)
-  "mars": 210,      // Mars: Average surface temperature ~-60°C (210K)
-  "jupiter": 165,   // Jupiter: Upper atmosphere temperature ~-108°C (165K)
-  "saturne": 134,   // Saturn: Upper atmosphere temperature ~-139°C (134K)
-  "uranus": 76,     // Uranus: Upper atmosphere temperature ~-197°C (76K)
-  "neptune": 72,    // Neptune: Upper atmosphere temperature ~-200°C (72K)
-  "pluton": 44,     // Pluto: Average temperature ~-229°C (44K)
-  "haumea": 73,     // Haumea: Approximate surface temperature ~-200°C (73K)
-  "eris": 43,       // Eris: Average surface temperature ~-217°C (43K)
-  "null": null,     // No temperature data available for this
-  "eugenia": 90,    // Eugenia (asteroid): Approximate surface temperature ~-120°C (90K)
-  "sylvia": 90,     // Sylvia (asteroid): Approximate surface temperature ~-120°C (90K)
-  "orcus": 70,      // Orcus (dwarf planet): Approximate surface temperature ~-225°C (70K)
-  "ida": 200,       // Ida (asteroid): Approximate surface temperature ~-100°C (200K)
-  "kleopatra": 220, // Kleopatra (asteroid): Approximate surface temperature ~-50°C (220K)
-  "quaoar": 70,     // Quaoar (dwarf planet): Approximate surface temperature ~-220°C (70K)
-  "makemake": 75,   // Makemake (dwarf planet): Approximate surface temperature ~-239°C (75K)
+  terre: 288,     // Earth: Average surface temperature ~15°C (288K)
+  mars: 210,      // Mars: Average surface temperature ~-60°C (210K)
+  jupiter: 165,   // Jupiter: Upper atmosphere temperature ~-108°C (165K)
+  saturne: 134,   // Saturn: Upper atmosphere temperature ~-139°C (134K)
+  uranus: 76,     // Uranus: Upper atmosphere temperature ~-197°C (76K)
+  neptune: 72,    // Neptune: Upper atmosphere temperature ~-200°C (72K)
+  pluton: 44,     // Pluto: Average temperature ~-229°C (44K)
+  haumea: 73,     // Haumea: Approximate surface temperature ~-200°C (73K)
+  eris: 43,       // Eris: Average surface temperature ~-217°C (43K)
+  null: null,     // No temperature data available for this
+  eugenia: 90,    // Eugenia (asteroid): Approximate surface temperature ~-120°C (90K)
+  sylvia: 90,     // Sylvia (asteroid): Approximate surface temperature ~-120°C (90K)
+  orcus: 70,      // Orcus (dwarf planet): Approximate surface temperature ~-225°C (70K)
+  ida: 200,       // Ida (asteroid): Approximate surface temperature ~-100°C (200K)
+  kleopatra: 220, // Kleopatra (asteroid): Approximate surface temperature ~-50°C (220K)
+  quaoar: 70,     // Quaoar (dwarf planet): Approximate surface temperature ~-220°C (70K)
+  makemake: 75,   // Makemake (dwarf planet): Approximate surface temperature ~-239°C (75K)
 };
 
 // Function to select the closest texture based on the exoplanet's characteristics
 function selectPlanetTexture(exoplanet) {
-  let texturePath = textures.mercury; // Default to Mercury if no match
+  let texturePath = textures.mercury; // Default to fallback texture
 
   if (exoplanet.bodyType === 'Gas Giant') {
     if (exoplanet.avgTemp > 500) {
@@ -75,14 +75,14 @@ export function generatePlanetTexture(exoplanet) {
     let { meanRadius, avgTemp, bodyType, density, axialTilt, aroundPlanet } = exoplanet;
 
     if (aroundPlanet && aroundPlanet.planet) {
-      avgTemp = temperatures[aroundPlanet.planet]; 
+      avgTemp = temperatures[aroundPlanet.planet];
     }
 
-    // Use the temp ranges of known bodies 
+    // Use the temp ranges of known bodies
     const canvas = document.createElement('canvas');
     const context = canvas.getContext('2d');
     const textureSize = 1024;  // Increase resolution for more detail
-    
+
     canvas.width = textureSize;
     canvas.height = textureSize;
 
@@ -91,9 +91,13 @@ export function generatePlanetTexture(exoplanet) {
 
     // Load the selected base texture
     const textureLoader = new THREE.TextureLoader();
+    console.log('Attempting to load texture from:', texturePath);
     textureLoader.load(
       texturePath, // Texture path
-      (baseTexture) => { // Success callback
+      (baseTexture) => {
+        // Success callback
+        console.log('Texture loaded successfully!');
+
         // Step 2: Start creating the texture using the base texture
         context.drawImage(baseTexture.image, 0, 0, textureSize, textureSize);
 
@@ -152,8 +156,23 @@ export function generatePlanetTexture(exoplanet) {
         resolve(texture);  // Resolve the promise with the texture
       },
       undefined,  // No progress callback needed
-      (error) => { // Error callback
-        reject(error); // Reject the promise if loading fails
+      (error) => {
+        // Error callback
+        console.error(`Error loading texture at ${texturePath}:`, error.target?.src || error);
+
+        // Use fallback texture
+        textureLoader.load(
+          textures.mercury,
+          (fallbackTexture) => {
+            console.warn('Using fallback texture.');
+            resolve(fallbackTexture);
+          },
+          undefined,
+          (fallbackError) => {
+            console.error('Error loading fallback texture:', fallbackError);
+            reject(fallbackError);
+          }
+        );
       }
     );
   });
