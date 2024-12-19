@@ -2,13 +2,13 @@ import * as THREE from 'three';
 
 // Predefined textures for planets (these would be in your 'public/textures' folder)
 const textures = {
-  mercury: 'exo-query/textures/2k_mercury.jpg',
-  venus: 'exo-query/textures/2k_venus_surface.jpg',
-  mars: 'exo-query/textures/2k_mars.jpg',
-  jupiter: 'exo-query/textures/2k_jupiter.jpg',
-  saturn: 'exo-query/textures/2k_saturn.jpg',
-  uranus: 'exo-query/textures/2k_uranus.jpg',
-  neptune: 'exo-query/textures/2k_neptune.jpg',
+  mercury: 'textures/2k_mercury.jpg',
+  venus: 'textures/2k_venus_surface.jpg',
+  mars: 'textures/2k_mars.jpg',
+  jupiter: 'textures/2k_jupiter.jpg',
+  saturn: 'textures/2k_saturn.jpg',
+  uranus: 'textures/2k_uranus.jpg',
+  neptune: 'textures/2k_neptune.jpg',
 };
 
 const temperatures = {
